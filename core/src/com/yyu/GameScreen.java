@@ -1,11 +1,13 @@
 package com.yyu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -15,6 +17,15 @@ public class GameScreen implements Screen {
 
     private static final float WORLD_WIDTH = 800;
     private static final float WORLD_HEIGHT = 600;
+
+    private static final int XGETTER = 10;
+    private static final int YGETTER =35;
+
+    GameBoard board = new GameBoard();
+   private int mouseX;
+   private int mouseY;
+
+   BitmapFont tempFont = new BitmapFont();
 
     //Object that allows us to draw all our graphics
     private SpriteBatch spriteBatch;
@@ -28,13 +39,6 @@ public class GameScreen implements Screen {
     //control how the camera views the world
     //zoom in/out? Keep everything scaled?
     private Viewport viewport;
-
-    //Textures
-    private Texture emptyTile;
-    private Texture questionTile;
-    private Texture bombTile;
-    private Texture emptyFloor;
-
 
     public void clearScreen() {
         Gdx.gl.glClearColor(0,0,0,1);
@@ -56,16 +60,30 @@ public class GameScreen implements Screen {
         shapeRenderer.setAutoShapeType(true); //???, I just know that this was the solution to an annoying problem
 
         //load all textures
-        emptyTile = new Texture("emptyTile.jpg");
     }
 
+    public void handleClick(){
+
+
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+            mouseY=Gdx.input.getY();
+            mouseX=Gdx.input.getX();
+            board.handleCLick(mouseX,mouseY);
+        }
+    }
     @Override
     public void render(float delta) {
         clearScreen();
 
+        handleClick();//playerinput
+
+
         //all texture drawing must happen between begin() and end()
         spriteBatch.begin();
-        spriteBatch.draw(emptyTile, 300, 300);
+        board.draw(spriteBatch);
+        tempFont.draw(spriteBatch,"Clicked at (" + mouseX + "," + mouseY+ ")",400,100);
+        tempFont.draw(spriteBatch,"row: "+((mouseY-10)/25),400,120);
+        tempFont.draw(spriteBatch,"col: "+(mouseX-10)/25,400,140);
         spriteBatch.end();
     }
 
