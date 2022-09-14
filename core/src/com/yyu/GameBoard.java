@@ -7,14 +7,21 @@ import java.util.ArrayList;
 
 public class GameBoard {
     private int[][] board;
+
+
+    int flagCount=0;
+
     private boolean firstClick = true;
     //Textures
     private Texture emptyTile;
     private Texture questionTile;
     private Texture bombTile;
+    private Texture flagTile;
     private Texture emptyFloor;
     private Texture bomb;
     private Texture oneTile,twoTile,threeTile,fourTile,fiveTile,sixTile,sevenTile,eightTile;
+    private boolean gameEnd=true;
+    public int bombleft=99;
 
     private static final int Bomb = 9, EmptyTile = 10,FlaggedTile = 20, Nobombs=30;
     public GameBoard(){
@@ -31,6 +38,8 @@ public class GameBoard {
         sixTile = new Texture("sixTile.jpg");
         sevenTile = new Texture("sevenTile.jpg");
         eightTile = new Texture("eightTile.jpg");
+        emptyFloor = new Texture("empty floor.jpg");
+        flagTile = new Texture("flagTile.jpg");
     }
 
     public boolean isValidLoc(int row, int col){
@@ -48,8 +57,22 @@ public class GameBoard {
                 placeBombs(rowclicked,colclicked);
                 initBoardNumbers();
             }
+
+            //clearEmptyLocs(rowclicked,colclicked);
         }
+
         System.out.println(getNeighbors(rowclicked, colclicked));
+    }
+
+    public void handleRightClick(int x, int y){
+        int rowclicked = (y-10)/25;
+        int colclicked = (x-10)/25;
+
+        if(isValidLoc(rowclicked,colclicked)&&flagCount<99) {
+            board[rowclicked][colclicked] = 100;
+            flagCount+=1;
+        }
+        System.out.println(99-flagCount);
     }
 
 
@@ -118,6 +141,24 @@ public class GameBoard {
 
         return locs;
     }
+/*
+    private void clearEmptyLocs(int row, int col){
+        SpriteBatch spriteBatch = new SpriteBatch();
+        boolean hasEmptylocs = true;
+        while(hasEmptylocs=true) {
+            for (int i = 0; i < 9; i++)
+                if (board[getNeighbors(row, col).get(i).getRow()][getNeighbors(row, col).get(i).getCol()] == EmptyTile) {
+                    board[getNeighbors(row, col).get(i).getRow()][getNeighbors(row, col).get(i).getCol()]=0;
+
+                    hasEmptylocs = true;
+                } else {
+                    hasEmptylocs = false;
+                }
+        }
+    }
+
+ */
+
 
     private int bombsAroundLoc(int row, int col){
         ArrayList<Location> locs = getNeighbors(row, col);
@@ -152,8 +193,16 @@ public class GameBoard {
                 if (board[row][col] >= EmptyTile && board[row][col] < FlaggedTile) {
                     spriteBatch.draw(emptyTile,(10) + (col*25), (600-35) - (row * 25));
                 }
+
+                else if (board[row][col] == 100) {
+                    spriteBatch.draw(flagTile,(10) + (col*25), (600-35) - (row * 25));
+                }
+                else if (board[row][col] == 0) {
+                    spriteBatch.draw(emptyFloor,(10) + (col*25), (600-35) - (row * 25));
+                }
                 else if (board[row][col] == Bomb) {
                     spriteBatch.draw(bomb,(10) + (col*25), (600-35) - (row * 25));
+                    System.exit(0);
                 }
                 else if (board[row][col] == 1) {
                     spriteBatch.draw(oneTile,(10) + (col*25), (600-35) - (row * 25));

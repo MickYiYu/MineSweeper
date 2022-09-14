@@ -70,6 +70,12 @@ public class GameScreen implements Screen {
             mouseX=Gdx.input.getX();
             board.handleCLick(mouseX,mouseY);
         }
+
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
+            mouseY=Gdx.input.getY();
+            mouseX=Gdx.input.getX();
+            board.handleRightClick(mouseX,mouseY);
+        }
     }
     @Override
     public void render(float delta) {
